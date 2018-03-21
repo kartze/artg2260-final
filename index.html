@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <head>
   <meta charset="utf-8">
   <title>imagine</title>
@@ -10,12 +11,10 @@
   <div class="nav">
     <ul id="left">
       <li><a>imagine</a></li>
-      	</ul>
-      	<ul id="right">
-        <li><a id="fullscreen">fullscreen</a></li>
-
-
-        <script>
+    </ul>
+    <ul id="right">
+      <li><a id="fullscreen">fullscreen</a></li>
+      <script>
         function toggleFullscreen(elem) {
           elem = elem || document.documentElement;
           if (!document.fullscreenElement && !document.mozFullScreenElement &&
@@ -41,36 +40,35 @@
             }
           }
         }
-
         document.getElementById('fullscreen').addEventListener('click', function() {
           toggleFullscreen();
         });
-        </script>
-
-        <li><a onClick="soundToggle();" id="soundToggle">sound on</a></li>
-        <script>
-  function soundToggle() {
-    if (document.getElementById('soundToggle').innerText == "sound on"){    document.getElementById('soundToggle').innerText = "sound off";
-  } else document.getElementById('soundToggle').innerText = "sound on";
-}
-</script>
-        <li><a href="credits.html">CREDITS</a></li>
+      </script>
+      <li><a onClick="soundToggle();" id="soundToggle">sound on</a></li>
+      <script>
+        function soundToggle() {
+          if (document.getElementById('soundToggle').innerText == "sound on") {
+            document.getElementById('soundToggle').innerText = "sound off";
+          } else document.getElementById('soundToggle').innerText = "sound on";
+        }
+      </script>
+      <li><a href="credits.html">CREDITS</a></li>
       <li><a href="about.html">ABOUT</a></li>
-        		<li><a href="index.html" class="active">HOME</a></li>
-      	</ul>
-      </div>
+      <li><a href="index.html" class="active">HOME</a></li>
+    </ul>
+  </div>
 
-      <div class="vid">
-      </div>
+  <div class="vid">
+  </div>
 
-      <div class="footer">
-        <ul id="left">
-          <li><a href="https://nathanmelenbrink.github.io/artg2260/" target="_blank">artg2260</a></li>
-            </ul>
-            <ul id="right">
-              <li><a href="">email</a></li>
-            <li><a href="">twitter</a></li>
-                  <li><a href="">fb</a></li>
-            </ul>
-          </div>
+  <div class="footer">
+    <ul id="left">
+      <li><a href="https://nathanmelenbrink.github.io/artg2260/" target="_blank">artg2260</a></li>
+    </ul>
+    <ul id="right">
+      <li><a href="">email</a></li>
+      <li><a href="">twitter</a></li>
+      <li><a href="">fb</a></li>
+    </ul>
+  </div>
 </body>
