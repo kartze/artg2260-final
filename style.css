@@ -1,5 +1,4 @@
 html {
-  background: black;
   font-family: 'Quicksand', sans-serif;
 }
 
@@ -11,45 +10,54 @@ html {
 }
 
 .nav ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #333;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
 }
 
 #left {
-	float: left;
+  float: left;
 }
 
 #left li {
-	float: left;
+  float: left;
 }
 
 #right li {
-    float: right;
+  float: right;
 }
 
 li a {
-    display: inline-block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
 }
 
 li a:hover {
-    background-color: #111;
+  background-color: #111;
 }
 
 .active {
-    background-color: blue;
+  background-color: blue;
+}
+
+.vid {
+  width: 100%;
+  position: absolute;
+  top: 50px;
+  left: 0;
+  right: 0;
+  margin: auto;
 }
 
 .main {
   width: 60%;
   position: absolute;
-  top:35%;
+  top: 35%;
   left: 0;
   right: 0;
   margin: auto;
@@ -62,15 +70,16 @@ li a:hover {
 }
 
 .footer ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #333;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
 }
 
 .footer {
   position: fixed;
   width: 100%;
-  bottom: 0%;  left: 0%;
+  bottom: 0%;
+  left: 0%;
 }
