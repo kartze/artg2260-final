@@ -1,8 +1,7 @@
 # artg2260-final
 Final project for ARTG2260: Programming Basics
 
-Karisa Tzeng
-Alexander Nathanson
+Karisa Tzeng, Alexander Nathanson
 
 Project description:
 An interactive music video for "Imagine", by John Lennon.
@@ -18,5 +17,4 @@ MVP Goals:
 - create 1 basic animated scene using paper.js
 
 Used:
-html, css, js
-paper.js
+html, css, js, paper.js
