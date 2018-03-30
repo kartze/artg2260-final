@@ -15,14 +15,22 @@ function setup() {
 
 function draw() {
   if (on == 1) {
-    background(0);
-    b.display();
-    b.move();
-    b.teleport();
+    update();
   } else if (on == 2) {
-    background(0);
-    b.display();
+    paused();
   }
+}
+
+function update() {
+  background(0);
+  b.display();
+  b.move();
+  b.teleport();
+}
+
+function paused() {
+  background(0);
+  b.display();
 }
 
 function keyPressed() {

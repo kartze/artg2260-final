@@ -1,5 +1,5 @@
 html {
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Kalam', cursive;
   background-color: black;
 }
 
@@ -43,7 +43,7 @@ li a:hover {
 }
 
 .active {
-  background-color: blue;
+  background-color: #b71540;
 }
 
 .vid {
