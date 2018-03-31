@@ -3,7 +3,8 @@ let scene = 0;
 let r = 0;
 let g = 255;
 let b = 0;
-var img;
+var img1;
+var img2;
 var rotSpeed = .01
 var x = 700
 var z = 0 
@@ -13,7 +14,8 @@ var rad = 700
 function setup() {
   var canvas = createCanvas(window.innerWidth, window.innerHeight - 70, WEBGL);
   canvas.parent('sketch-box');
-  img = loadImage("img/earth1.jpg");
+  img1 = loadImage("img/earth1.jpg");
+  img2 = loadImage("img/earth2.jpg")
 }
 
 function draw() {
@@ -22,7 +24,8 @@ function draw() {
   translate(0, 0);
   orbitControl();
   camera( cos(rotSpeed)* rad, y, sin(rotSpeed)* rad, 0, 0, 0, 0, 1, 0);
-  texture(img);
+  texture(img1);
+  texture(img2);
   sphere(250);
   //x++;
   //z++;
