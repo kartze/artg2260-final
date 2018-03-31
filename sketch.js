@@ -3,16 +3,18 @@ let scene = 0;
 let r = 0;
 let g = 255;
 let b = 0;
-var img;
+var img1, img2;
 let x, y, z;
 let s = 0.5, t = 0.0;
 let dt = 0.0002, ds = 0.0002;
 let rad = 350; 
 
+
 function setup() {
   var canvas = createCanvas(window.innerWidth, window.innerHeight - 70, WEBGL);
   canvas.parent('sketch-box');
-  img = loadImage("img/earth1.jpg");
+  img1 = loadImage("img/earth1.jpg");
+  img2 = loadImage("img/earth2.jpg")
 }
 
 function draw() {
