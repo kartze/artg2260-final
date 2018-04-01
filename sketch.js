@@ -34,12 +34,8 @@ function draw() {
   let focalY = map(mouseY, 0, height, rad, -rad);
   
   camera(x, y, z, focalX, focalY, 0, 1, -1, 1);
-  
-  gl = this._renderer.GL;
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-  texture(img);
+  texture(img1);
   sphere(250, 48, 32);
 
   // update angles
