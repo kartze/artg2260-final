@@ -5,10 +5,11 @@ let g = 255;
 let b = 0;
 var img1, img2;
 let x, y, z;
-let s = 0.5, t = 0.0;
-let dt = 0.0002, ds = 0.0002;
-let rad = 350; 
-
+let s = 0.5,
+  t = 0.0;
+let dt = 0.0002,
+  ds = 0.0002;
+let rad = 350;
 
 function setup() {
   var canvas = createCanvas(window.innerWidth, window.innerHeight - 70, WEBGL);
@@ -18,21 +19,21 @@ function setup() {
 }
 
 function draw() {
- background(12, 36, 97);
+  background(12, 36, 97);
   fill(r, g, b);
   translate(0, 0);
   orbitControl();
 
-  // trig formula for 3D world coordinate position on a sphere 
+  // trig formula for 3D world coordinate position on a sphere
   // to understand the math behind this see https://stackoverflow.com/questions/969798/plotting-a-point-on-the-edge-of-a-sphere
   x = rad * cos(s) * sin(t);
   y = rad * sin(s) * sin(t);
   z = rad * cos(t);
 
-  // where we're looking at, controlled by cursor 
+  // where we're looking at, controlled by cursor
   let focalX = map(mouseX, 0, width, rad, -rad);
   let focalY = map(mouseY, 0, height, rad, -rad);
-  
+
   camera(x, y, z, focalX, focalY, 0, 1, -1, 1);
 
   texture(img1);
@@ -43,11 +44,11 @@ function draw() {
   t += dt;
 
   // make sure angles stay between 0 and 2*PI
-  s = s % (2*PI);
-  t = t % (2*PI);
+  s = s % (2 * PI);
+  t = t % (2 * PI);
 
-  if(s < 0) s = 2*PI;
-  if(t< 0) t = 2*PI;
+  if (s < 0) s = 2 * PI;
+  if (t < 0) t = 2 * PI;
   //console.log(t);
 }
 
