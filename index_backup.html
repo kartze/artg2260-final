@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <title>IMAGINE</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Kalam" rel="stylesheet">
+  <script src="/build/three.js"></script>
+
+  <!-- THREE Source and extra libraries -->
+  <script src="js/controls/FlyControls.js"></script>
+
+  <script src="js/shaders/CopyShader.js"></script>
+  <script src="js/shaders/FilmShader.js"></script>
+
+  <script src="js/postprocessing/EffectComposer.js"></script>
+  <script src="js/postprocessing/ShaderPass.js"></script>
+  <script src="js/postprocessing/MaskPass.js"></script>
+  <script src="js/postprocessing/RenderPass.js"></script>
+  <script src="js/postprocessing/FilmPass.js"></script>
+
+  <script src="js/Detector.js"></script>
+  <script src="js/libs/stats.min.js"></script>
+
+  <!-- link p5 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/addons/p5.dom.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/addons/p5.sound.min.js"></script>
+  <script src="sketch.js"></script>
+</head>
+
+<body>
+  <div class="nav">
+    <ul id="left">
+      <li><a>IMAGINE</a></li>
+    </ul>
+    <ul id="right">
+      <li><a id="fullscreen">fullscreen</a></li>
+      <script>
+        function toggleFullscreen(elem) {
+          elem = elem || document.documentElement;
+          if (!document.fullscreenElement && !document.mozFullScreenElement &&
+            !document.webkitFullscreenElement && !document.msFullscreenElement) {
+            if (elem.requestFullscreen) {
+              elem.requestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+              elem.msRequestFullscreen();
+            } else if (elem.mozRequestFullScreen) {
+              elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) {
+              elem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            }
+          } else {
+            if (document.exitFullscreen) {
+              document.exitFullscreen();
+            } else if (document.msExitFullscreen) {
+              document.msExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+              document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+              document.webkitExitFullscreen();
+            }
+          }
+        }
+        document.getElementById('fullscreen').addEventListener('click', function() {
+          toggleFullscreen();
+        });
+      </script>
+      <li><a onClick="soundToggle();" id="soundToggle">sound on</a></li>
+      <script>
+        function soundToggle() {
+          if (document.getElementById('soundToggle').innerText == "sound on") {
+            document.getElementById('soundToggle').innerText = "sound off";
+          } else document.getElementById('soundToggle').innerText = "sound on";
+        }
+      </script>
+      <li><a href="credits.html">CREDITS</a></li>
+      <li><a href="about.html">ABOUT</a></li>
+      <li><a href="index.html" class="active">HOME</a></li>
+    </ul>
+  </div>
+
+  <div class="vid" id="container">
+
+  </div>
+
+  <div class="footer">
+    <ul id="left">
+      <li><a href="https://nathanmelenbrink.github.io/artg2260/" target="_blank">artg2260</a></li>
+    </ul>
+    <ul id="right">
+      <li><a href="">email</a></li>
+      <li><a href="">twitter</a></li>
+      <li><a href="">fb</a></li>
+    </ul>
+  </div>
+</body>
