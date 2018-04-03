@@ -38,7 +38,7 @@
       <li><a>IMAGINE</a></li>
     </ul>
     <ul id="right">
-      <li><a id="fullscreen">fullscreen</a></li>
+      <li><a id="fs">fullscreen</a></li>
       <script>
         function toggleFullscreen(elem) {
           elem = elem || document.documentElement;
@@ -65,7 +65,7 @@
             }
           }
         }
-        document.getElementById('fullscreen').addEventListener('click', function() {
+        document.getElementById('fs').addEventListener('click', function() {
           toggleFullscreen();
         });
       </script>
@@ -82,11 +82,11 @@
       <li><a href="index.html" class="active">HOME</a></li>
     </ul>
   </div>
-
     <script>
       CanvasTexture = function(parentTexture) {
         this._canvas = document.createElement("canvas");
         this._canvas.width = this._canvas.height = 1024;
+        // The CanvasRenderingContext2D is an object that is used to issue 2D drawing commands to a canvas. It is obtained by passing '2d' to the HTMLCanvasElement.getContext() method.
         this._context2D = this._canvas.getContext("2d");
         if (parentTexture) {
           this._parentTexture.push(parentTexture);
@@ -113,6 +113,11 @@
         _context2D: null,
         _xCross: 0,
         _yCross: 0,
+        _xPrev: 512,
+        _yPrev: 512,
+        // here you can add something like xArray: [] and yArray: []
+        // to store an array of start points instead of just one x and y 
+        _i: 0,
         _crossRadius: 57,
         _crossMax: 40,
         _crossMin: 4,
@@ -125,31 +130,57 @@
           }
         },
         setCrossPosition: function(x, y) {
+
           this._xCross = x * this._canvas.width;
           this._yCross = y * this._canvas.height;
           this._draw();
         },
         _draw: function() {
+          // unfortunately we can't use p5 here. However, we can use this: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D which contains very similar functions
           if (!this._context2D) return;
-          this._context2D.clearRect(0, 0, this._canvas.width, this._canvas.height);
+          // I removed this, this is like a background() function
+          // this._context2D.clearRect(0, 0, this._canvas.width, this._canvas.height);
+          
           // Background.
-          this._context2D.drawImage(this._background, 0, 0);
-          // Yellow cross.
-          this._context2D.lineWidth = this._crossThickness * 3;
+          // Here we only draw the world map for 10 frames, to make sure it loads, but not after that since we want to see the walkers rendered on top
+          if (this._i < 10) {
+            this._context2D.drawImage(this._background, 0, 0);
+          }
+          // Random walkers
+          this._context2D.lineWidth = this._crossThickness;
           this._context2D.strokeStyle = "#FFFF00";
-          this._context2D.beginPath();
-          this._context2D.moveTo(this._xCross - this._crossMax - 2, this._yCross - this._crossMax - 2);
-          this._context2D.lineTo(this._xCross - this._crossMin, this._yCross - this._crossMin);
-          this._context2D.moveTo(this._xCross + this._crossMin, this._yCross + this._crossMin);
-          this._context2D.lineTo(this._xCross + this._crossMax + 2, this._yCross + this._crossMax + 2);
-          this._context2D.moveTo(this._xCross - this._crossMax - 2, this._yCross + this._crossMax + 2);
-          this._context2D.lineTo(this._xCross - this._crossMin, this._yCross + this._crossMin);
-          this._context2D.moveTo(this._xCross + this._crossMin, this._yCross - this._crossMin);
-          this._context2D.lineTo(this._xCross + this._crossMax + 2, this._yCross - this._crossMax - 2);
-          this._context2D.stroke();
+          // below is the main draw function. You can make this a for() loop to iterate over many walkers
+          //for ( let i = 0; i < array.length; i++){
+            // since we can't use p5, we'll just calculate x and y separately (without vectors)
+            var xPos = this._xPrev + (Math.random() - 0.5) * 20;
+            var yPos = this._yPrev + (Math.random() - 0.5) * 20;
+
+            // drawing is more tedious without p5. we have to start a path, move it's start point, add a line, then apply a stroke to actually display it 
+            this._context2D.beginPath();
+            this._context2D.moveTo(this._xPrev, this._yPrev);
+            this._context2D.lineTo(xPos, yPos);
+            this._context2D.stroke();
+
+            // update x and y to the new points
+            this._xPrev = xPos;
+            this._yPrev = yPos;
+
+            // I wasn't sure what this part was for, but you're welcome to add it back
+            // var r = random(100);
+            // if (r < 1) {
+            //   step.mult(random(25, 100));
+            // } else {
+            //   step.setMag(2);
+            // }
+          //}
+
+          // refresh the texture 
           for (var i = 0; i < this._parentTexture.length; i++) {
             this._parentTexture[i].needsUpdate = true;
           }
+
+          // count the frames
+          this._i++;
         }
       }
 
@@ -164,9 +195,9 @@
       var SCREEN_WIDTH  = window.innerWidth;
       var canvas, container, stats;
       var cubeTexture;
-      var camera, controls, scene, renderer;
+      var cam, controls, scene, renderer;
       var geometry, meshPlanet, meshClouds, meshMoon;
-      var dirLight, pointLight, ambientLight;
+      var dirLight, ptLight, ambLight;
       var composer;
       var textureLoader = new THREE.TextureLoader();
       var d, dPlanet, dMoon, dMoonVec = new THREE.Vector3();
@@ -181,11 +212,11 @@
       function init() {
         container = document.createElement( 'div' );
         document.body.appendChild( container );
-        camera = new THREE.PerspectiveCamera( 25, SCREEN_WIDTH / SCREEN_HEIGHT, 50, 1e7 );
-        camera.position.z = radius * 5;
+        cam = new THREE.PerspectiveCamera( 25, SCREEN_WIDTH / SCREEN_HEIGHT, 50, 1e7 );
+        cam.position.z = radius * 5;
         scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2( 0x000000, 0.00000025 );
-        controls = new THREE.FlyControls( camera );
+        controls = new THREE.FlyControls( cam );
         controls.movementSpeed = 200;
         controls.domElement = container;
         controls.rollSpeed = Math.PI / 24;
@@ -224,7 +255,7 @@
         container.addEventListener('mousemove', onMouseMove, false);
 
         // postprocessing
-        var renderModel = new THREE.RenderPass( scene, camera );
+        var renderModel = new THREE.RenderPass( scene, cam );
         var effectFilm = new THREE.FilmPass( 0.35, 0.75, 2048, false );
         effectFilm.renderToScreen = true;
         composer = new THREE.EffectComposer( renderer );
@@ -236,8 +267,8 @@
         SCREEN_HEIGHT = window.innerHeight;
         SCREEN_WIDTH  = window.innerWidth;
         renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
-        camera.aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
-        camera.updateProjectionMatrix();
+        cam.aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
+        cam.updateProjectionMatrix();
         composer.reset();
       }
       function animate() {
@@ -246,7 +277,7 @@
         // stats.update();
       }
       function onMouseMove(evt) {
-        console.log('mouse move');
+        //console.log('mouse move');
         evt.preventDefault();
         var array = getMousePosition(container, evt.clientX, evt.clientY);
         onClickPosition.fromArray(array);
@@ -263,7 +294,7 @@
       };
       var getIntersects = function(point, objects) {
         mouse.set((point.x * 2) - 1, -(point.y * 2) + 1);
-        raycaster.setFromCamera(mouse, camera);
+        raycaster.setFromCamera(mouse, cam);
         return raycaster.intersectObjects(objects);
       };
 
@@ -273,7 +304,7 @@
         meshPlanet.rotation.y += rotationSpeed * delta;
 
         // slow down as we approach the surface
-        dPlanet = camera.position.length();
+        dPlanet = cam.position.length();
         
         d = ( dPlanet - radius * 1.01 );
 
