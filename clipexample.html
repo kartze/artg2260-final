@@ -1,0 +1,20 @@
+<canvas id="canvas"></canvas>
+
+<script>
+  var canvas = document.getElementById('canvas');
+  var ctx = canvas.getContext('2d');
+
+  // layer 0 - final look for earth
+  // make the canvas "earth1.jpg"
+
+  // layer 1 - should be initial look for earth
+  ctx.fillStyle = 'blue';
+  ctx.fillRect(10, 10, 100, 100);
+
+  // will erase the following layer from the previous layer
+  ctx.globalCompositeOperation = 'destination-out';
+
+  // layer 2 - should be random walker - erases layer 1
+  ctx.fillStyle = 'red';
+  ctx.fillRect(60, 50, 100, 100);
+</script>
