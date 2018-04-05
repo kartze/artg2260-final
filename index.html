@@ -140,7 +140,7 @@
         setCrossPosition: function(x, y) {
           this._xCross = x * this._canvas.width;
           this._yCross = y * this._canvas.height;
-          this._draw();
+          // this._draw();
         },
         _draw: function() {
           // unfortunately we can't use p5 here. However, we can use this: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D which contains very similar functions
@@ -160,14 +160,12 @@
           this._context2D.strokeStyle = "white";
           // below is the main draw function. You can make this a for() loop to iterate over many walkers
           // since we can't use p5, we'll just calculate x and y separately (without vectors)
-          var xPos = this._xPrev + (Math.random() - 0.5) * 50;
-          var yPos = this._yPrev + (Math.random() - 0.5) * 50;
+          //var xPos = this._xPrev + (Math.random() - 0.5) * 50;
+          //var yPos = this._yPrev + (Math.random() - 0.5) * 50;
 
           // update x and y to the new points
-          this._xPrev = xPos;
-          this._yPrev = yPos;
-          this._xArray.push(xPos);
-          this._yArray.push(yPos);
+          this._xArray.push(this._xCross);
+          this._yArray.push(this._yCross);
 
           // drawing is more tedious without p5. we have to start a path, move its start point, add a line, then apply a stroke to actually display it 
           this._context2D.beginPath();
@@ -190,11 +188,6 @@
 
           // restore the context to it's original state
           this._context2D.restore();
-
-          
-          
-          
-
 
           // refresh the texture 
           for (var i = 0; i < this._parentTexture.length; i++) {
@@ -285,6 +278,7 @@
         composer.reset();
       }
       function animate() {
+        canvas._draw();
         requestAnimationFrame( animate );
         render();
         // stats.update();
