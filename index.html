@@ -151,7 +151,7 @@
         }
 
         // DO
-        this._context2D.globalCompositeOperation = 'source-out';
+        this._context2D.globalCompositeOperation = 'destination-in';
 
         // Random walkers
         this._context2D.lineWidth = this._crossThickness;
@@ -213,10 +213,28 @@
     var mouse = new THREE.Vector2();
     var onClickPosition = new THREE.Vector2();
 
+    var camera;
+
     init();
     animate();
 
     function init() {
+      // create an AudioListener and add it to the camera
+      var listener = new THREE.AudioListener();
+      camera.add(listener);
+
+      // create a global audio source
+      var sound = new THREE.Audio(listener);
+
+      // load a sound and set it as the Audio object's buffer
+      var audioLoader = new THREE.AudioLoader();
+      audioLoader.load('audio/imagine.mp3', function(buffer) {
+        sound.setBuffer(buffer);
+        sound.setLoop(true);
+        sound.setVolume(0.5);
+        sound.play();
+      });
+
       container = document.createElement('div');
       document.body.appendChild(container);
       cam = new THREE.PerspectiveCamera(25, SCREEN_WIDTH / SCREEN_HEIGHT, 50, 1e7);
