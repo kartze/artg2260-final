@@ -82,73 +82,248 @@
       <li><a href="index.html" class="active">HOME</a></li>
     </ul>
   </div>
-  <canvas id="canvas" width=2048 height=1024></canvas>
     <script>
+      CanvasTexture = function(parentTexture) {
+        this._canvas = document.createElement("canvas");
+        this._canvas.width = this._canvas.height = 1024;
+        // The CanvasRenderingContext2D is an object that is used to issue 2D drawing commands to a canvas. It is obtained by passing '2d' to the HTMLCanvasElement.getContext() method.
+        this._context2D = this._canvas.getContext("2d");
+        if (parentTexture) {
+          this._parentTexture.push(parentTexture);
+          parentTexture.image = this._canvas;
+        }
 
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
+        // load background
+        var that = this;
+        this._background = document.createElement("img");
+        this._background.addEventListener("load", function(event) {
+          that._canvas.width = that._background.naturalWidth;
+          that._canvas.height = that._background.naturalHeight;
+          that._draw();
+        }, false);
+        this._background.crossOrigin = '';
+        this._background.src = "img/earth_atmos_2048.jpg";
 
-var geoMap, polMap;
+        // load foreground 
+        var that = this;
+        this._foreground = document.createElement("img");
+        this._foreground.addEventListener("load", function(event) {
+          that._canvas.width = that._foreground.naturalWidth;
+          that._canvas.height = that._foreground.naturalHeight;
+          that._draw();
+        }, false);
+        this._foreground.crossOrigin = '';
+        this._foreground.src = "img/earthborders.jpg";
 
-var imageURLs = [];
-var imagesOK = 0;
-var imgs = [];
-imageURLs.push("textures/planets/earth_atmos_2048.jpg");
-imageURLs.push("img/earth2.jpg");
-loadAllImages();
+        this._draw();
+      };
+      CanvasTexture.prototype = {
+        constructor: CanvasTexture,
+        _canvas: null,
+        _context2D: null,
+        _xCross: 0,
+        _yCross: 0,
+        _xPrev: 512,
+        _yPrev: 512,
+        _xArray: [],
+        _yArray: [],
+        // here you can add something like xArray: [] and yArray: []
+        // to store an array of start points instead of just one x and y 
+        _i: 0,
+        _parentTexture: [],
+        addParent: function(parentTexture) {
+          if (this._parentTexture.indexOf(parentTexture) === -1) {
+            this._parentTexture.push(parentTexture);
+            parentTexture.image = this._canvas;
+          }
+        },
+        setCrossPosition: function(x, y) {
+          this._xCross = x * this._canvas.width;
+          this._yCross = y * this._canvas.height;
+          this._draw();
+        },
+        _draw: function() {
+          // unfortunately we can't use p5 here. However, we can use this: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D which contains very similar functions
+          if (!this._context2D) return;
+          // I removed this, this is like a background() function
+          // this._context2D.clearRect(0, 0, this._canvas.width, this._canvas.height);
 
-function loadAllImages() {
-    for (var i = 0; i < imageURLs.length; i++) {
-        var img = new Image();
-        imgs.push(img);
-        img.onload = function () {
-            imagesOK++;
-            imagesAllLoaded();
-        };
-        img.src = imageURLs[i];
-    }
-}
-
-var imagesAllLoaded = function () {
-    if (imagesOK == imageURLs.length) {
-        // all images are fully loaded an ready to use
-        geoMap = imgs[0];
-        polMap = imgs[1];
-        start();
-    }
-};
-
-
-function start() {
-
-    // save the context state
-    ctx.save();
-
-    // draw the overlay, where the white will become erased
-    ctx.drawImage(polMap, 0, 0);
-
-    // set color to white, and draw all walker geometry, 
-    // further "erasing" the political map
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvas.width/2, canvas.height/2);
-
-    // change composite mode to multiply
-    // The pixels are of the top layer are multiplied with the 
-    // corresponding pixel of the bottom layer. A darker picture is the result.
-    ctx.globalCompositeOperation = "multiply";
-    // you could also try 'difference' -- whatever you choose, 
-    // you may need to adjust for it in photoshop
-
-    // draw the underlying geoMap
-    ctx.drawImage(geoMap, 0, 0);
-
-    // restore the context to it's original state
-    ctx.restore();
-
-}
+          // draw the overlay, where the white will become erased
+          this._context2D.drawImage(this._foreground, 0, 0);
 
 
+          // set color to white, and draw all walker geometry, 
+          // further "erasing" the political map
 
+          // Random walkers
+          this._context2D.lineWidth = 12;
+          this._context2D.strokeStyle = "white";
+          // below is the main draw function. You can make this a for() loop to iterate over many walkers
+          // since we can't use p5, we'll just calculate x and y separately (without vectors)
+          var xPos = this._xPrev + (Math.random() - 0.5) * 50;
+          var yPos = this._yPrev + (Math.random() - 0.5) * 50;
+
+          // update x and y to the new points
+          this._xPrev = xPos;
+          this._yPrev = yPos;
+          this._xArray.push(xPos);
+          this._yArray.push(yPos);
+
+          // drawing is more tedious without p5. we have to start a path, move its start point, add a line, then apply a stroke to actually display it 
+          this._context2D.beginPath();
+          for ( let i = 1; i < this._xArray.length; i++){    
+            this._context2D.moveTo(this._xArray[i-1], this._yArray[i-1]);
+            this._context2D.lineTo(this._xArray[i], this._yArray[i]);
+          }
+          this._context2D.stroke();
+          
+          this._context2D.save();
+
+          // change composite mode to multiply
+          // The pixels are of the top layer are multiplied with the 
+          // corresponding pixel of the bottom layer. A darker picture is the result.
+          this._context2D.globalCompositeOperation = "multiply";
+
+
+          // draw the underlying geoMap
+          this._context2D.drawImage(this._background, 0, 0);
+
+          // restore the context to it's original state
+          this._context2D.restore();
+
+          
+          
+          
+
+
+          // refresh the texture 
+          for (var i = 0; i < this._parentTexture.length; i++) {
+            this._parentTexture[i].needsUpdate = true;
+          }
+          // count the frames
+          this._i++;
+        }
+      }
+      if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+      var radius = 6371;
+      var tilt = 0.41;
+      var rotationSpeed = 0.02;
+      // var cloudsScale = 1.005;
+      // var moonScale = 0.23;
+      var MARGIN = 0;
+      var SCREEN_HEIGHT = window.innerHeight - MARGIN * 2;
+      var SCREEN_WIDTH  = window.innerWidth;
+      var canvas, container, stats;
+      var cubeTexture;
+      var cam, controls, scene, renderer;
+      var geometry, meshPlanet, meshClouds, meshMoon;
+      var dirLight, ptLight, ambLight;
+      var composer;
+      var textureLoader = new THREE.TextureLoader();
+      var d, dPlanet, dMoon, dMoonVec = new THREE.Vector3();
+      var clock = new THREE.Clock();
+      var raycaster = new THREE.Raycaster();
+      var mouse = new THREE.Vector2();
+      var onClickPosition = new THREE.Vector2();
+      init();
+      animate();
+      function init() {
+        container = document.createElement( 'div' );
+        document.body.appendChild( container );
+        cam = new THREE.PerspectiveCamera( 25, SCREEN_WIDTH / SCREEN_HEIGHT, 50, 1e7 );
+        cam.position.z = radius * 5;
+        scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2( 0x000000, 0.00000025 );
+        controls = new THREE.FlyControls( cam );
+        controls.movementSpeed = 200;
+        controls.domElement = container;
+        controls.rollSpeed = Math.PI / 24;
+        controls.autoForward = false;
+        controls.dragToLook = false;
+        dirLight = new THREE.DirectionalLight( 0xffffff );
+        dirLight.position.set( -1, 0, 1 ).normalize();
+        scene.add( dirLight );
+        cubeTexture = new THREE.Texture(undefined, THREE.UVMapping, THREE.RepeatWrapping, THREE.RepeatWrapping);
+        canvas = new CanvasTexture(cubeTexture);
+        var materialNormalMap = new THREE.MeshPhongMaterial( {
+          specular: 0x333333,
+          shininess: 15,
+          map: cubeTexture, 
+          // textureLoader.load( "textures/planets/earth_atmos_2048.jpg" ),
+           specularMap: textureLoader.load( "img/earth_specular_2048.jpg" ),
+           normalMap: textureLoader.load( "img/earth_normal_2048.jpg" ),
+           normalScale: new THREE.Vector2( 0.85, 0.85 )
+        } );
+        // planet
+        geometry = new THREE.SphereGeometry( radius, 100, 50 );
+        meshPlanet = new THREE.Mesh( geometry, materialNormalMap );
+        meshPlanet.rotation.y = 0;
+        meshPlanet.rotation.z = tilt;
+        scene.add( meshPlanet );
+        renderer = new THREE.WebGLRenderer();
+        renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+        container.appendChild( renderer.domElement );
+        //stats = new Stats();
+        //container.appendChild( stats.dom );
+        window.addEventListener( 'resize', onWindowResize, false );
+        container.addEventListener('mousemove', onMouseMove, false);
+        // postprocessing
+        var renderModel = new THREE.RenderPass( scene, cam );
+        var effectFilm = new THREE.FilmPass( 0.35, 0.75, 2048, false );
+        effectFilm.renderToScreen = true;
+        composer = new THREE.EffectComposer( renderer );
+        composer.addPass( renderModel );
+        composer.addPass( effectFilm );
+      }
+      function onWindowResize( event ) {
+        SCREEN_HEIGHT = window.innerHeight;
+        SCREEN_WIDTH  = window.innerWidth;
+        renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+        cam.aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
+        cam.updateProjectionMatrix();
+        composer.reset();
+      }
+      function animate() {
+        requestAnimationFrame( animate );
+        render();
+        // stats.update();
+      }
+      function onMouseMove(evt) {
+        //console.log('mouse move');
+
+        evt.preventDefault();
+        //canvas._draw();
+        var array = getMousePosition(container, evt.clientX, evt.clientY);
+        onClickPosition.fromArray(array);
+        var intersects = getIntersects(onClickPosition, scene.children);
+        if (intersects.length > 0 && intersects[0].uv) {
+          var uv = intersects[0].uv;
+          intersects[0].object.material.map.transformUv(uv);
+          canvas.setCrossPosition(uv.x, uv.y);
+        }
+      }
+      var getMousePosition = function(dom, x, y) {
+        var rect = dom.getBoundingClientRect();
+        return [(x - rect.left) / rect.width, (y - rect.top) / rect.height];
+      };
+      var getIntersects = function(point, objects) {
+        mouse.set((point.x * 2) - 1, -(point.y * 2) + 1);
+        raycaster.setFromCamera(mouse, cam);
+        return raycaster.intersectObjects(objects);
+      };
+      function render() {
+        // rotate the planet 
+        var delta = clock.getDelta();
+        meshPlanet.rotation.y += rotationSpeed * delta;
+        // slow down as we approach the surface
+        dPlanet = cam.position.length();
+        
+        d = ( dPlanet - radius * 1.01 );
+        controls.movementSpeed = 0.1 * d; // nathan changed from .33 to .1
+        controls.update( delta );
+        composer.render( delta );
+      }
     </script>
 
   </body>

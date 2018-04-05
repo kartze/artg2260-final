@@ -148,9 +148,9 @@ CanvasTexture = function(parentTexture) {
           specular: 0x333333,
           shininess: 15,
           map: cubeTexture, 
-          // textureLoader.load( "textures/planets/earth_atmos_2048.jpg" ),
-           specularMap: textureLoader.load( "textures/planets/earth_specular_2048.jpg" ),
-           normalMap: textureLoader.load( "textures/planets/earth_normal_2048.jpg" ),
+           //textureLoader.load( "img/earth_atmos_2048.jpg" ),
+           specularMap: textureLoader.load( "img/earth_specular_2048.jpg" ),
+           normalMap: textureLoader.load( "img/earthborders.jpg" ),
            normalScale: new THREE.Vector2( 0.85, 0.85 )
         } );
         // planet
