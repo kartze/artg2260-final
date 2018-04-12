@@ -6,15 +6,21 @@ Karisa Tzeng, Alexander Nathanson
 Project description:
 An interactive music video for "Imagine", by John Lennon.
 
-MVP Goals:
-- create basic web interface
+Used:
+three.js, html, css
+
+Next Steps:
+- improve web interface
   - vid player
+    - landing page
+      - similar erasing of "IMAGINE"
+    - pause and play
+    - sound toggle
+    - fullscreen toggle
   - about page
   - credits page
-  - sound toggle
-  - fullscreen toggle
-- set up paper.js
-- create 1 basic animated scene using paper.js
-
-Used:
-html, css, js, paper.js
+  - hide menu
+- add WalkerVectors
+- improve movement controls
+- add stars / FFT interaction
+- lyrics switch languages for different countries
