@@ -120,10 +120,7 @@
       _yCross: 0,
       _xPrev: 512,
       _yPrev: 512,
-      _xArray: [],
-      _yArray: [],
-      // here you can add something like xArray: [] and yArray: []
-      // to store an array of start points instead of just one x and y
+      _walkers:[], 
       _i: 0,
       _parentTexture: [],
       addParent: function(parentTexture) {
@@ -132,9 +129,14 @@
           parentTexture.image = this._canvas;
         }
       },
-      setCrossPosition: function(x, y) {
-        this._xCross = x * this._canvas.width;
-        this._yCross = y * this._canvas.height;
+      setCrossPosition: function(_x, _y) {
+        let walker = [];
+        let startPt = {
+          x: _x * this._canvas.width,
+          y: _y * this._canvas.height
+        }
+        walker.push(startPt);
+        this._walkers.push(walker);
         // this._draw();
       },
       _draw: function() {
@@ -153,22 +155,30 @@
         // Random walkers
         this._context2D.lineWidth = 12;
         this._context2D.strokeStyle = "white";
+        
         // below is the main draw function. You can make this a for() loop to iterate over many walkers
         // since we can't use p5, we'll just calculate x and y separately (without vectors)
-        //var xPos = this._xPrev + (Math.random() - 0.5) * 50;
-        //var yPos = this._yPrev + (Math.random() - 0.5) * 50;
+        for (let j = 0; j < this._walkers.length; j++) {
+          let numPts = this._walkers[j].length;
 
-        // update x and y to the new points
-        this._xArray.push(this._xCross);
-        this._yArray.push(this._yCross);
+          var xPos = this._walkers[j][numPts-1].x + (Math.random() - 0.5) * 50;
+          var yPos = this._walkers[j][numPts-1].y + (Math.random() - 0.5) * 50;
 
-        // drawing is more tedious without p5. we have to start a path, move its start point, add a line, then apply a stroke to actually display it
-        this._context2D.beginPath();
-        for (let i = 1; i < this._xArray.length; i++) {
-          this._context2D.moveTo(this._xArray[i - 1], this._yArray[i - 1]);
-          this._context2D.lineTo(this._xArray[i], this._yArray[i]);
+          let newPt = {
+            x: xPos,
+            y: yPos
+          }
+
+          this._walkers[j].push(newPt);
+          // drawing is more tedious without p5. we have to start a path, move its start point, add a line, then apply a stroke to actually display it
+          this._context2D.beginPath();
+          for (let i = 1; i < numPts+1; i++) {
+            this._context2D.moveTo(this._walkers[j][i].x, this._walkers[j][i].y);
+            this._context2D.lineTo(this._walkers[j][i-1].x, this._walkers[j][i-1].y);
+          }
+          this._context2D.stroke();
+
         }
-        this._context2D.stroke();
 
         this._context2D.save();
 
@@ -274,7 +284,8 @@
       //stats = new Stats();
       //container.appendChild( stats.dom );
       window.addEventListener('resize', onWindowResize, false);
-      container.addEventListener('mousemove', onMouseMove, false);
+      //container.addEventListener('mousemove', onMouseMove, false);
+      container.addEventListener('mousedown', onMouseClick, false);
       // postprocessing
       var renderModel = new THREE.RenderPass(scene, cam);
       var effectFilm = new THREE.FilmPass(0.35, 0.75, 2048, false);
@@ -300,8 +311,8 @@
       // stats.update();
     }
 
-    function onMouseMove(evt) {
-      //console.log('mouse move');
+    function onMouseClick(evt) {
+      console.log('mouse clicked');
 
       evt.preventDefault();
       //canvas._draw();
@@ -313,6 +324,7 @@
         intersects[0].object.material.map.transformUv(uv);
         canvas.setCrossPosition(uv.x, uv.y);
       }
+      console.log(canvas);
     }
     var getMousePosition = function(dom, x, y) {
       var rect = dom.getBoundingClientRect();
