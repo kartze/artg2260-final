@@ -66,13 +66,7 @@
         });
       </script>
       <li><a onClick="soundToggle();" id="soundToggle">sound on</a></li>
-      <script>
-        function soundToggle() {
-          if (document.getElementById('soundToggle').innerText == "sound on") {
-            document.getElementById('soundToggle').innerText = "sound off";
-          } else document.getElementById('soundToggle').innerText = "sound on";
-        }
-      </script>
+
       <li><a href="credits.html">CREDITS</a></li>
       <li><a href="about.html">ABOUT</a></li>
       <li><a href="index.html" class="active">HOME</a></li>
@@ -154,7 +148,7 @@
         // further "erasing" the political map
 
         // Random walkers
-        this._context2D.lineWidth = this._i / 100;
+        this._context2D.lineWidth = (this._i / 100) + 1;
         this._context2D.strokeStyle = "white";
         
         // below is the main draw function. You can make this a for() loop to iterate over many walkers
@@ -201,9 +195,10 @@
         }
         // count the frames
         this._i++;
-        if (this._i % 100 == 0) { console.log(this._i)}
+        //if (this._i % 100 == 0) { console.log(this._i)}
       }
     }
+
     if (!Detector.webgl) Detector.addGetWebGLMessage();
     var radius = 6371;
     var tilt = -0.41;
@@ -225,39 +220,43 @@
     var raycaster = new THREE.Raycaster();
     var mouse = new THREE.Vector2();
     var onClickPosition = new THREE.Vector2();
-    preinit();
-    //animate();
+    var sound;
+    init();
+    animate();
 
-    
+    function soundToggle() {
+      if(sound.isPlaying) sound.pause();
+      else sound.play();
 
-    function preinit(){
+      if (document.getElementById('soundToggle').innerText == "sound on") {
+        document.getElementById('soundToggle').innerText = "sound off";
+      } else document.getElementById('soundToggle').innerText = "sound on";
+    }
+
+    function init() {
+
       container = document.createElement('div');
       document.body.appendChild(container);
       cam = new THREE.PerspectiveCamera(25, SCREEN_WIDTH / SCREEN_HEIGHT, 50, 1e7);
+
+      var audioLoader = new THREE.AudioLoader();
 
       // create an AudioListener and add it to the camera
       var listener = new THREE.AudioListener();
       cam.add(listener);
 
       // create a global audio source
-      var sound = new THREE.Audio(listener);
+      sound = new THREE.Audio(listener);
 
       // load a sound and set it as the Audio object's buffer
-      var audioLoader = new THREE.AudioLoader();
       audioLoader.load('audio/imagine.mp3', function(buffer) {
         sound.setBuffer(buffer);
         sound.setLoop(true);
         sound.setVolume(0.5);
-        sound.play();
+        //sound.autoplay = true;
+        //sound.play();
+        console.log('loaded audio');
       });
-
-      init();
-      animate();
-    }
-
-    function init() {
-
-      
 
       cam.position.z = radius * 5;
       scene = new THREE.Scene();
@@ -326,7 +325,7 @@
       // make instructions that go away after first click
       console.log('mouse clicked');
       document.getElementById('instructions').innerHTML = '';
-
+      sound.play();
       evt.preventDefault();
       //canvas._draw();
       var array = getMousePosition(container, evt.clientX, evt.clientY);
