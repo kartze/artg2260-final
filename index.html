@@ -28,9 +28,10 @@
 </head>
 
 <body>
+
   <div class="nav">
     <ul id="left">
-      <li><a>IMAGINE</a></li>
+      <li><a>IMAGINE</a> <span style="color:grey;" id='instructions'>Click on any country to begin...</span> </li>
     </ul>
     <ul id="right">
       <li><a id="fs">fullscreen</a></li>
@@ -153,7 +154,7 @@
         // further "erasing" the political map
 
         // Random walkers
-        this._context2D.lineWidth = 12;
+        this._context2D.lineWidth = this._i / 100;
         this._context2D.strokeStyle = "white";
         
         // below is the main draw function. You can make this a for() loop to iterate over many walkers
@@ -161,8 +162,8 @@
         for (let j = 0; j < this._walkers.length; j++) {
           let numPts = this._walkers[j].length;
 
-          var xPos = this._walkers[j][numPts-1].x + (Math.random() - 0.5) * 50;
-          var yPos = this._walkers[j][numPts-1].y + (Math.random() - 0.5) * 50;
+          var xPos = this._walkers[j][numPts-1].x + (Math.random() - 0.5) * (this._i / 100);
+          var yPos = this._walkers[j][numPts-1].y + (Math.random() - 0.5) * (this._i / 100);
 
           let newPt = {
             x: xPos,
@@ -200,12 +201,13 @@
         }
         // count the frames
         this._i++;
+        if (this._i % 100 == 0) { console.log(this._i)}
       }
     }
     if (!Detector.webgl) Detector.addGetWebGLMessage();
     var radius = 6371;
-    var tilt = 0.41;
-    var rotationSpeed = 0.02;
+    var tilt = -0.41;
+    var rotationSpeed = -0.02;
     // var cloudsScale = 1.005;
     // var moonScale = 0.23;
     var MARGIN = 0;
@@ -223,11 +225,12 @@
     var raycaster = new THREE.Raycaster();
     var mouse = new THREE.Vector2();
     var onClickPosition = new THREE.Vector2();
-    init();
-    animate();
+    preinit();
+    //animate();
 
-    function init() {
+    
 
+    function preinit(){
       container = document.createElement('div');
       document.body.appendChild(container);
       cam = new THREE.PerspectiveCamera(25, SCREEN_WIDTH / SCREEN_HEIGHT, 50, 1e7);
@@ -247,6 +250,14 @@
         sound.setVolume(0.5);
         sound.play();
       });
+
+      init();
+      animate();
+    }
+
+    function init() {
+
+      
 
       cam.position.z = radius * 5;
       scene = new THREE.Scene();
@@ -312,7 +323,9 @@
     }
 
     function onMouseClick(evt) {
+      // make instructions that go away after first click
       console.log('mouse clicked');
+      document.getElementById('instructions').innerHTML = '';
 
       evt.preventDefault();
       //canvas._draw();
@@ -349,6 +362,7 @@
       composer.render(delta);
     }
   </script>
+
   <div class="footer">
     <ul id="left">
       <li><a href="https://nathanmelenbrink.github.io/artg2260/" target="_blank">artg2260</a></li>
